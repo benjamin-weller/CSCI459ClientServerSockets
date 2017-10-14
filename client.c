@@ -98,6 +98,7 @@ system when connect is called.
 
         if (strcomp(buffer, "EXIT"))
         {
+            write(sockfd,buffer,strlen(buffer));
             break;
         }
 
@@ -109,7 +110,6 @@ system when connect is called.
         if (n < 0)
             error("ERROR reading from socket");
         printf("%s\n",buffer);
-
     }
 
 /*

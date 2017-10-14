@@ -9,6 +9,31 @@ The port number is passed as an argument */
 #include <sys/types.h> //for system calls
 #include <sys/socket.h> //for sockets
 #include <netinet/in.h> //for internet
+#include <pthread.h> //for thread
+
+void threadFunction(int newSocketFileDescriptor)
+{
+    while (true)
+    {
+        bzero(buffer, 256);
+        n = read(newSocketFileDescriptor, buffer, 255);
+        if (n < 0)
+            error("ERROR reading from socket");
+
+        if (strcomp(buffer, "EXIT"))
+        {
+            close(newSocketFileDescriptor);
+            return;
+        }
+
+        //Else go on as usual.
+        printf("Here is the message: %s\n", buffer);
+
+        n = write(newSocketFileDescriptor, "I got your message", 18);
+        if (n < 0) error("ERROR writing to socket");
+    }
+}
+
 void error(const char *msg)
 {
     perror(msg);
@@ -17,7 +42,7 @@ void error(const char *msg)
 /*a funciton to print out error message and then abort */
 int main(int argc, char *argv[])
 {
-    int sockfd, newsockfd, portno;
+    int sockfd, newSocketFileDescriptor, portno;
 /*
 sockfd and newsockfd are file descriptors, i.e. array subscripts into the file
 descriptor table.
@@ -139,7 +164,8 @@ but what is passed in is a structure of type sockaddr_in, and so this must be ca
 the correct type.
 bind() returns 0 on success and -1 on falure.
 */
-    listen(sockfd,5);
+    while (true) {
+        listen(sockfd, 5);
 /*
 The listen system call allows the process to listen on the socket for connections.
 The first argument is the socket file descriptor, and the second is the size of the
@@ -150,12 +176,17 @@ This should be set to 5, the maximum size permitted by most systems. If the firs
 argument is a valid socket,
 this call cannot fail, and so the code doesn't check for errors.
 */
-    clilen = sizeof(cli_addr);
-    newsockfd = accept(sockfd,
-                       (struct sockaddr *) &cli_addr,
-                       &clilen);
-    if (newsockfd < 0)
-        error("ERROR on accept");
+        clilen = sizeof(cli_addr);
+        newSocketFileDescriptor = accept(sockfd,
+                           (struct sockaddr *) &cli_addr,
+                           &clilen);
+        if (newSocketFileDescriptor < 0)
+            error("ERROR on accept");
+
+        pthread_t processThread; // this is our thread identifier
+        pthread_create(&processThread, NULL, threadFunction, newSocketFileDescriptor);
+
+
 /*
 The accept() system call causes the process to block until a client connects to the
 server.
@@ -166,16 +197,17 @@ done using the new file descriptor.
 The second argument is a reference pointer to the address of the client on the other
 end of the connection,
 and the third argument is the size of this structure.
-*/
-    bzero(buffer,256);
-    n = read(newsockfd,buffer,255);
-    if (n < 0) error("ERROR reading from socket");
-    printf("Here is the message: %s\n",buffer);
-/*
+
+        bzero(buffer, 256);
+        n = read(newSocketFileDescriptor, buffer, 255);
+        if (n < 0)
+            error("ERROR reading from socket");
+        printf("Here is the message: %s\n", buffer);
+
 Note that we would only get to this point after a client has successfully connected
 to our server.
 F:\Presentation_courses_talks\NDSU\CSCI 459...\Tutorials\stage_1\server_Lecture.c 4
-This code initializes the buffer using the bzero() function, and then reads from the
+This code initializes the buffer using the bzero() function, and then reads from
 socket.
 Note that the read call uses the new file descriptor, the one returned by accept(),
 not the original file descriptor returned by socket(). Note also that the read() will
@@ -185,18 +217,21 @@ executed a write().
 It will read either the total number of characters in the socket or 255, whichever is
 less,
 and return the number of characters read.
-*/
-    n = write(newsockfd,"I got your message",18);
-    if (n < 0) error("ERROR writing to socket");
-/*
+
+        n = write(newSocketFileDescriptor, "I got your message", 18);
+        if (n < 0) error("ERROR writing to socket");
+
 Once a connection has been established, both ends can both read and write to the
 connection.
 Naturally, everything written by the client will be read by the server,
 and everything written by the server will be read by the client.
 This code simply writes a short message to the client. The last argument of write is
 the size of the message.
+
 */
-    close(newsockfd);
+    }
+
+    close(newSocketFileDescriptor);
     close(sockfd);
     return 0;
 }
