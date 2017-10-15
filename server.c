@@ -16,8 +16,11 @@ void error(const char *msg)
     exit(1);
 }
 
-void threadFunction(int newSocketFileDescriptor)
+void * threadFunction(void *pointerToSocket)
 {
+	int *inbetweenVariable = (int *) pointerToSocket;
+	int newSocketFileDescriptor = *inbetweenVariable;
+	
     char input[256];
     int inputValidity;
 
@@ -31,7 +34,8 @@ void threadFunction(int newSocketFileDescriptor)
         if (strcmp(input, "EXIT"))
         {
             close(newSocketFileDescriptor);
-            return;
+            //free(*inbetweenVariable);
+            pthread_exit(0);
         }
 
         //Else go on as usual.
@@ -188,7 +192,7 @@ this call cannot fail, and so the code doesn't check for errors.
             error("ERROR on accept");
 
         pthread_t processThread; // this is our thread identifier
-        pthread_create(&processThread, NULL, threadFunction, newSocketFileDescriptor);
+        pthread_create(&processThread, NULL, threadFunction, &newSocketFileDescriptor);
 
 
 /*
