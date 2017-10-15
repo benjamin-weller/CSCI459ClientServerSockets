@@ -9,6 +9,13 @@ The port number is passed as an argument */
 #include <netinet/in.h> //for internet
 #include <pthread.h> //for thread
 
+
+void error(const char *msg)
+{
+    perror(msg);
+    exit(1);
+}
+
 void threadFunction(int newSocketFileDescriptor)
 {
     char input[256];
@@ -35,12 +42,6 @@ void threadFunction(int newSocketFileDescriptor)
         if (inputValidity < 0)
             error("ERROR writing to socket");
     }
-}
-
-void error(const char *msg)
-{
-    perror(msg);
-    exit(1);
 }
 /*a funciton to print out error message and then abort */
 int main(int argc, char *argv[])
