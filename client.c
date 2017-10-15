@@ -1,4 +1,3 @@
-#include "client.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -90,13 +89,13 @@ but it does not need to know its own port number. This is typically assigned by 
 system when connect is called.
 */
 
-    while (true)
+    while (1)
     {
         printf("Please enter the message: ");
         bzero(buffer,256);
         fgets(buffer,255,stdin);
 
-        if (strcomp(buffer, "EXIT"))
+        if (strcmp(buffer, "EXIT"))
         {
             write(sockfd,buffer,strlen(buffer));
             break;

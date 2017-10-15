@@ -1,5 +1,3 @@
-#include "server.h"
-
 /* A simple server in the internet domain using TCP
 The port number is passed as an argument */
 #include <stdio.h>
@@ -13,24 +11,29 @@ The port number is passed as an argument */
 
 void threadFunction(int newSocketFileDescriptor)
 {
-    while (true)
+    char input[256];
+    int inputValidity;
+
+    while (1)
     {
-        bzero(buffer, 256);
-        n = read(newSocketFileDescriptor, buffer, 255);
-        if (n < 0)
+        bzero(input, 256);
+        inputValidity = read(newSocketFileDescriptor, input, 255);
+        if (inputValidity < 0)
             error("ERROR reading from socket");
 
-        if (strcomp(buffer, "EXIT"))
+        if (strcmp(input, "EXIT"))
         {
             close(newSocketFileDescriptor);
             return;
         }
 
         //Else go on as usual.
-        printf("Here is the message: %s\n", buffer);
+        printf("Here is the message: %s\n", input);
 
-        n = write(newSocketFileDescriptor, "I got your message", 18);
-        if (n < 0) error("ERROR writing to socket");
+        inputValidity = write(newSocketFileDescriptor, "I got your message", 18);
+
+        if (inputValidity < 0)
+            error("ERROR writing to socket");
     }
 }
 
@@ -164,7 +167,7 @@ but what is passed in is a structure of type sockaddr_in, and so this must be ca
 the correct type.
 bind() returns 0 on success and -1 on falure.
 */
-    while (true) {
+    while (1) {
         listen(sockfd, 5);
 /*
 The listen system call allows the process to listen on the socket for connections.
