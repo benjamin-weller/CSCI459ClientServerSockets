@@ -89,9 +89,9 @@ Notice that the client needs to know the port number of the server,
 but it does not need to know its own port number. This is typically assigned by the
 system when connect is called.
 */
-
-char exitBuffer[2];
-strcpy(exitBuffer, "EXIT");
+//
+//char exitBuffer[2];
+//strcpy(exitBuffer, "EXIT");
 
     while (1)
     {
@@ -102,15 +102,15 @@ strcpy(exitBuffer, "EXIT");
 		//printf("%s",exitBuffer);
 		
 		//Int for comparison of EXIT, and Exit, and exit
-		int value = strcmp(buffer, exitBuffer);
-		int value1 = strcmp(buffer, exitBuffer);
-		int value2 = strcmp(buffer, exitBuffer);
+//		int value = strcmp(buffer, exitBuffer);
+//		int value1 = strcmp(buffer, exitBuffer);
+//		int value2 = strcmp(buffer, exitBuffer);
+//		
+//		printf("The did you send EXIT?: %i\n", value);
+//		printf("The did you send Exit?: %i\n", value1);
+//		printf("The did you send exit?: %i\n", value2);		
 		
-		printf("The did you send EXIT?: %i\n", value);
-		printf("The did you send Exit?: %i\n", value1);
-		printf("The did you send exit?: %i\n", value2);		
-		
-        if (strcmp(buffer, exitBuffer) == 10)
+        if (strcmp(buffer, "EXIT\n") == 0)
         {
         	printf("Input has been caputred: %s\n", buffer);
         	
@@ -141,7 +141,7 @@ writes the message to the socket, reads the reply from the socket, and displays 
 reply on the screen.
 */
 
-printf("I AM OUTSIDE THE LOOP\n");
+//printf("I AM OUTSIDE THE LOOP\n");
     close(sockfd);
     return 0;
 }

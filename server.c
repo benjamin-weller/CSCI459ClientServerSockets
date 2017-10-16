@@ -31,7 +31,7 @@ void * threadFunction(void *pointerToSocket)
         if (inputValidity < 0)
             error("ERROR reading from socket");
 
-        if (strcmp(input, "EXIT"))
+        if (strcmp(input, "EXIT\n")== 0)
         {
             close(newSocketFileDescriptor);
             //free(*inbetweenVariable);
@@ -172,7 +172,7 @@ the correct type.
 bind() returns 0 on success and -1 on falure.
 */
 
-printf("We have sucessfully gotten to the loop.");
+//printf("We have sucessfully gotten to the loop.");
     while (1) {
         listen(sockfd, 5);
 /*
@@ -189,7 +189,7 @@ this call cannot fail, and so the code doesn't check for errors.
         newSocketFileDescriptor = accept(sockfd,
                            (struct sockaddr *) &cli_addr,
                            &clilen);
-		printf("We have accepted a connection");
+		//printf("We have accepted a connection");
         if (newSocketFileDescriptor < 0)
             error("ERROR on accept");
 
