@@ -146,7 +146,6 @@ only a single
 field unsigned long s_addr. This field contains the IP address of the host.
 For server code, this will always be the IP address of the machine on which the
 server is running,
-F:\Presentation_courses_talks\NDSU\CSCI 459...\Tutorials\stage_1\server_Lecture.c 3
 and there is a symbolic constant INADDR_ANY which gets this address.
 */
     serv_addr.sin_port = htons(portno);
@@ -172,6 +171,8 @@ but what is passed in is a structure of type sockaddr_in, and so this must be ca
 the correct type.
 bind() returns 0 on success and -1 on falure.
 */
+
+printf("We have sucessfully gotten to the loop.");
     while (1) {
         listen(sockfd, 5);
 /*
@@ -188,6 +189,7 @@ this call cannot fail, and so the code doesn't check for errors.
         newSocketFileDescriptor = accept(sockfd,
                            (struct sockaddr *) &cli_addr,
                            &clilen);
+		printf("We have accepted a connection");
         if (newSocketFileDescriptor < 0)
             error("ERROR on accept");
 

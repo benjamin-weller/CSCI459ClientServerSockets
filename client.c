@@ -90,22 +90,44 @@ but it does not need to know its own port number. This is typically assigned by 
 system when connect is called.
 */
 
+char exitBuffer[2];
+strcpy(exitBuffer, "EXIT");
+
     while (1)
     {
         printf("Please enter the message: ");
         bzero(buffer,256);
         fgets(buffer,255,stdin);
-
-        if (strcmp(buffer, "EXIT"))
+		
+		//printf("%s",exitBuffer);
+		
+		//Int for comparison of EXIT, and Exit, and exit
+		int value = strcmp(buffer, exitBuffer);
+		int value1 = strcmp(buffer, exitBuffer);
+		int value2 = strcmp(buffer, exitBuffer);
+		
+		printf("The did you send EXIT?: %i\n", value);
+		printf("The did you send Exit?: %i\n", value1);
+		printf("The did you send exit?: %i\n", value2);		
+		
+        if (strcmp(buffer, exitBuffer) == 10)
         {
+        	printf("Input has been caputred: %s\n", buffer);
+        	
             write(sockfd,buffer,strlen(buffer));
             break;
         }
+        
+        printf("Input is about to be sent: %s\n", buffer);
 
         n = write(sockfd,buffer,strlen(buffer));
         if (n < 0)
             error("ERROR writing to socket");
-        bzero(buffer,256);
+        
+        printf("Input is has been sent: %s\n", buffer);
+		bzero(buffer,256);
+                
+        
         n = read(sockfd,buffer,255);
         if (n < 0)
             error("ERROR reading from socket");
@@ -118,6 +140,8 @@ It prompts the user to enter a message, uses fgets to read the message from stdi
 writes the message to the socket, reads the reply from the socket, and displays this
 reply on the screen.
 */
+
+printf("I AM OUTSIDE THE LOOP\n");
     close(sockfd);
     return 0;
 }
